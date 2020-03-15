@@ -18,8 +18,9 @@ public class TestScene extends Scene {
 		Graphics2D g2d = (Graphics2D) g;
 		Graphics3D g3d = new Graphics3D(g2d, 30, 0.1, 10);
 		GameObject cube = g3d.getCube(0, 0, 0, 1.0);
-		cube.setEulerAngles(Math.PI/5, 0, 0);
-		cube.setPos(0.0, 0.0, -2.0);
+		cube.setEulerAngles(0, 0, 0);
+		cube.setPos(0.0, 0.0, 2.0);
+		//g3d.view.lookAt(new Vec3d(0.0, 0, 1.0));
 		//System.out.println(cube.model);
 		g3d.drawWireFrame(cube);
 		

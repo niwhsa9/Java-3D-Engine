@@ -170,6 +170,12 @@ public class Mat {
 							}
 			);
 	}
+	
+	public Mat transpose() {
+		Mat t = new Mat(this.col, this.row);
+		return null; 
+	}
+	
 	/*
 	public static Mat rotateCenter(Mat point, double theta) {
 		return new Mat(3, 3, translateMat3x3());

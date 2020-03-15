@@ -33,8 +33,12 @@ public class GameObject {
 	}
 	
 	public void setPose(double pitch, double roll, double yaw, double x, double y, double z) {
-		
+		setEulerAngles(pitch, roll, yaw);
+		setPos(x, y, z);
 	}
+	
+	//public void translateBy();
+	//public void rotateBy
 	
 	public double getPitch() {
 		return rvec.x;

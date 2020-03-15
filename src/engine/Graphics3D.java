@@ -11,6 +11,7 @@ public class Graphics3D {
 	
 	Graphics2D g2d;
 	ProjectionMat proj;
+	CameraMat view; 
 	double fov;
 	double nearClip;
 	double farClip;
@@ -22,6 +23,7 @@ public class Graphics3D {
 		this.nearClip = nearClip;
 		this.farClip = farClip;
 		proj = new ProjectionMat(Constants.WindowDims.width/Constants.WindowDims.height, fov, nearClip, farClip);
+		view = new CameraMat();
 	}
 	
 
@@ -38,6 +40,7 @@ public class Graphics3D {
 			Mat p = obj.mesh[i].getMat();
 			p = p.lmul(obj.model);//.lmul(proj);//(p.lmul(obj.model)).lmul(proj);//.lmul(proj);
 			//System.out.println("x " + p.data[0] + " y " + p.data[1] + " z " +  p.data[2]);
+			p = p.lmul(view);
 			p = p.lmul(proj);
 			
 			int x = (int) ((p.data[0]/p.data[3]) * Constants.WindowDims.width/2); 
@@ -50,11 +53,11 @@ public class Graphics3D {
 			x = Constants.WindowDims.width/2 + x; 
 			u[i] = x;
 			v[i] = y;
-			g2d.fillRect(x, y, 5, 5);
+			//g2d.fillRect(x, y, 5, 5);
 		}
 		
 		for(int i = 0; i < u.length ; i++) {
-			if(i % 4 == 0 && i + 3 < u.length)  g2d.drawLine(u[i], v[i], u[i+3], v[i+3]);
+			if(i % obj.faceSize == 0 && i + obj.faceSize-1 < u.length)  g2d.drawLine(u[i], v[i], u[i+3], v[i+3]);
 			else g2d.drawLine(u[i], v[i], u[i-1], v[i-1]);
 			
 		}
