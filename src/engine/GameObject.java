@@ -1,5 +1,7 @@
 package engine;
 
+import java.util.ArrayList;
+
 public class GameObject {
 	Vec4d[][] mesh;// = new Vec4d();
 	ModelMat model;
@@ -13,6 +15,30 @@ public class GameObject {
 		this.rvec = new Vec4d(0,0,0,0);
 		this.tvec = new Vec4d(0,0,0,0);
 		this.model = new ModelMat(0, 0, 0, 0, 0, 0);
+		triangularize();
+	}
+	
+	public void triangularize() {
+		ArrayList<Vec4d[]> faces = new ArrayList<Vec4d[]>();
+		
+		for(int i = 0; i < mesh.length; i++) {
+			if(mesh[i].length > 3) {
+				for(int q = 2; q < mesh[i].length; q++) {
+					faces.add(new Vec4d[] {
+						mesh[i][q], 
+						mesh[i][q-1],
+						mesh[i][0]
+					} );
+				}
+			} else faces.add(mesh[i]);
+		}
+		
+		Vec4d[][] meshNew = new Vec4d[faces.size()][3];
+		
+		for(int i = 0; i < faces.size(); i++) meshNew[i] = faces.get(i);
+		
+		mesh = meshNew;
+		
 	}
 	
 	public void setEulerAngles(double pitch, double roll, double yaw) {
