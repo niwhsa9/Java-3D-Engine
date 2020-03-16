@@ -10,6 +10,7 @@ public class GameObject {
 	Vec4d tvec;
 	Vec4d velo;
 	Vec4d rvec; //encode Euler angles 
+	double scale = 1.0;
 
 	public GameObject(Vec3d[] vertex, int[][] face) {
 		this.vertex = vertex;
@@ -17,7 +18,7 @@ public class GameObject {
 		//this.faceSize = faceSize;
 		this.rvec = new Vec4d(0,0,0,0);
 		this.tvec = new Vec4d(0,0,0,0);
-		this.model = new ModelMat(0, 0, 0, 0, 0, 0);
+		this.model = new ModelMat(0, 0, 0, 0, 0, 0, scale);
 		triangularize();
 	}
 	
@@ -49,7 +50,7 @@ public class GameObject {
 		this.rvec.y = roll;
 		this.rvec.z = yaw; 
 		
-		this.model = new ModelMat(pitch, roll, yaw, tvec.x, tvec.y, tvec.z);
+		this.model = new ModelMat(pitch, roll, yaw, tvec.x, tvec.y, tvec.z, scale);
 	}
 	
 	public void setPos(double x, double y, double z) {
@@ -57,7 +58,12 @@ public class GameObject {
 		this.tvec.y = y;
 		this.tvec.z = z; 
 		
-		this.model = new ModelMat(rvec.x, rvec.y, rvec.z, x, y, z);
+		this.model = new ModelMat(rvec.x, rvec.y, rvec.z, x, y, z, scale);
+	}
+	
+	public void setScale(double s) {
+		this.scale = s;
+		this.model = new ModelMat(rvec.x, rvec.y, rvec.z, tvec.x, tvec.y, tvec.z, s);
 	}
 	
 	public void setPose(double pitch, double roll, double yaw, double x, double y, double z) {

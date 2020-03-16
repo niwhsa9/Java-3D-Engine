@@ -2,7 +2,7 @@ package engine;
 
 public class ModelMat extends Mat {
 
-	public ModelMat(double pitch, double roll, double yaw, double x, double y, double z) {
+	public ModelMat(double pitch, double roll, double yaw, double x, double y, double z, double scale) {
 		super(4, 4);
 
 		Mat yRot = new Mat(4, 4, new double[] { 
@@ -29,8 +29,15 @@ public class ModelMat extends Mat {
 				0, 0, 1, z, 
 				0, 0, 0, 1
 		});
+		
+		Mat scaleMat = new Mat(4, 4, new double[] {
+				scale, 0, 0, 0,
+				0, scale, 0, 0,
+				0, 0, scale, 0,
+				0, 0, 0, 1
+		});
 
-		this.data = yRot.lmul(pRot).lmul(rRot).lmul(tvec).data;
+		this.data = scaleMat.lmul(yRot).lmul(pRot).lmul(rRot).lmul(tvec).data;
 
 	}
 
