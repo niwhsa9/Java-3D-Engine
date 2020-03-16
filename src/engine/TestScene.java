@@ -1,6 +1,7 @@
 package engine;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.io.FileInputStream;
@@ -18,49 +19,34 @@ public class TestScene extends Scene {
 	double yaw = 0; 
 	
 	GameObject mesh;
+    Font c = new Font("Courier", Font.PLAIN, 18);
+
 	
 	public TestScene() {
 		readObj();
 	}
 	
+	double prevTime;
+	
 	public void readObj() {
-		try {
-			InputStream objInputStream = 
-					new FileInputStream("teapot.obj");
-			Obj obj = ObjReader.read(objInputStream);
-			obj = ObjUtils.triangulate(obj);
-			
-			Vec3d[] oV = new Vec3d[obj.getNumVertices()];
-			
-			for(int i = 0; i < obj.getNumVertices(); i++) {
-				oV[i] = new Vec3d( obj.getVertex(i).getX(),  obj.getVertex(i).getY(),  obj.getVertex(i).getZ());
-			}
-			
-			int[][] iV = new int[obj.getNumFaces()][];
-			
-			for(int i = 0; i < obj.getNumFaces(); i++) {
-				iV[i] = new int[3];
-				for(int q = 0; q < 3; q++) {
-					iV[i][q] = obj.getFace(i).getVertexIndex(q);
-				}
-			}
-			
-			mesh = new GameObject(oV, iV);
-			System.out.println("loaded obj");
-			
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
+		mesh = GameObject.readFromFile("teapot.obj");
 	}
 	
 	public void paintComponent(Graphics g) {
 		
 		//if(Input.keysPressed[Constants.KEY_A]) pitch+=0.1;
 		
+		
 		Graphics2D g2d = (Graphics2D) g;
+		g2d.setColor(Color.BLACK);
+		g2d.fillRect(0, 0, Constants.WindowDims.width, Constants.WindowDims.height);
+		
 		Graphics3D g3d = new Graphics3D(g2d, 30, 0.1, 10);
 		
-		
+		double cur = System.currentTimeMillis()/1000.0;
+		g2d.setColor(Color.RED);
+		super.drawCenteredString(g2d, "" + 1.0/(cur-prevTime), c, Constants.WindowDims.width - 50, 50);
+		prevTime = cur;
 		
 		GameObject cube = g3d.getCube(0, 0, 0, 1.0);
 		cube.setEulerAngles(0, 0, 0);
@@ -92,7 +78,7 @@ public class TestScene extends Scene {
 		pyramid.setEulerAngles(Math.PI, Math.PI, 0);
 		//g3d.drawWireFrame(pyramid);
 		mesh.setScale(0.02);
-		g3d.drawWireFrame(mesh);
+		//g3d.drawWireFrame(mesh);
 
 		
 		
