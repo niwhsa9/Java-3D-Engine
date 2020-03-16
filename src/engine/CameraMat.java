@@ -7,7 +7,7 @@ public class CameraMat extends Mat{
 	Vec3d up = new Vec3d(0, 1, 0);
 	public CameraMat() {
 		super(4, 4);
-		pos = new Vec3d(1.0, 2.0, -2.0);
+		pos = new Vec3d(1.0, 0.0, -2.0);
 		lookAt(new Vec3d(0, 0, 0));
 		
 	}

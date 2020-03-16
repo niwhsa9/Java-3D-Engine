@@ -79,7 +79,7 @@ public class TestScene extends Scene {
 		//g3d.drawWireFrame(pyramid);
 		mesh.setScale(0.02);
 		//g3d.drawWireFrame(mesh);
-
+		g3d.drawTriangle(g2d, new Vec2d(100, 100), new Vec2d(300, 500), new Vec2d(600, 100), Color.RED, Color.GREEN, Color.YELLOW);
 		
 		
 		
