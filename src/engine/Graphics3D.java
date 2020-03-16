@@ -31,20 +31,17 @@ public class Graphics3D {
 	public void drawWireFrame(GameObject obj) {
 		//System.out.println("drawing wireframe");
 		g2d.setColor(Color.RED);
-		//int prevQ = 0;
-		//System.out.println("-----------------");
-		int[][] u = new int[obj.mesh.length][];
-		int[][] v = new int[obj.mesh.length][];
 		
-		for(int i = 0; i < obj.mesh.length; i++) {
-			u[i] = new int[obj.mesh[i].length];
-			v[i] = new int[obj.mesh[i].length];
-			for(int q = 0; q < obj.mesh[i].length; q++) {
-				Mat p = obj.mesh[i][q].getMat();
-				p = p.lmul(obj.model);//.lmul(proj);//(p.lmul(obj.model)).lmul(proj);//.lmul(proj);
-				//System.out.println("x " + p.data[0] + " y " + p.data[1] + " z " +  p.data[2]);
-				p = p.lmul(view);
-				p = p.lmul(proj);
+		int[][] u = new int[obj.face.length][];
+		int[][] v = new int[obj.face.length][];
+		
+		for(int i = 0; i < obj.face.length; i++) {
+			u[i] = new int[obj.face[i].length];
+			v[i] = new int[obj.face[i].length];
+			for(int q = 0; q < obj.face[i].length; q++) {
+				Mat p = obj.vertex[obj.face[i][q]].getHomogenous().getMat();
+				p = p.lmul(obj.model).lmul(view).lmul(proj); 
+		
 			
 				int x = (int) ((p.data[0]/p.data[3]) * Constants.WindowDims.width/2); 
 				int y = (int) ((p.data[1]/p.data[3]) * Constants.WindowDims.width/2); 
@@ -67,6 +64,32 @@ public class Graphics3D {
 	}
 	
 	public GameObject getCube(double centerX, double centerY, double centerZ, double side) {
+		double halfSide = side/2;
+
+		Vec3d[] pV = new Vec3d[] {
+				new Vec3d(centerX - halfSide, centerY + halfSide, centerZ + halfSide), 
+				new Vec3d(centerX + halfSide, centerY + halfSide, centerZ + halfSide),
+				new Vec3d(centerX + halfSide, centerY - halfSide, centerZ + halfSide),
+				new Vec3d(centerX - halfSide, centerY - halfSide, centerZ + halfSide),
+				
+				new Vec3d(centerX - halfSide, centerY + halfSide, centerZ - halfSide), 
+			    new Vec3d(centerX + halfSide, centerY + halfSide, centerZ - halfSide), 
+				new Vec3d(centerX + halfSide, centerY - halfSide, centerZ - halfSide), 
+				new Vec3d(centerX - halfSide, centerY - halfSide, centerZ - halfSide),
+		};
+		
+		int[][] pF = new int[][] {
+			new int[] {0, 1, 2, 3},
+			new int[] {4, 5, 6, 7},
+			new int[] {4, 0, 3, 7},
+			new int[] {5, 1, 2, 6},
+			new int[] {4, 5, 1, 0},
+			new int[] {7, 6, 2, 3}
+		};
+		GameObject cube = new GameObject(pV, pF);
+		return cube;
+		
+		/*
 		Vec4d[][] mesh = new Vec4d[6][4];
 		
 		double halfSide = side/2;
@@ -106,7 +129,8 @@ public class Graphics3D {
 		
 		
 		
-		return new GameObject(mesh);
+		return new GameObject(mesh); */
+	
 		
 	}
 

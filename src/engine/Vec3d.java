@@ -38,4 +38,8 @@ public class Vec3d {
 		return x * b.x + y * b.y + z * b.z;
 	}
 	
+	public Vec4d getHomogenous() {
+		return new Vec4d(x, y, z, 1.0);
+	}
+	
 }
