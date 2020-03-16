@@ -1,16 +1,15 @@
 package engine;
 
 public class GameObject {
-	Vec4d[] mesh;// = new Vec4d();
-	int faceSize;
+	Vec4d[][] mesh;// = new Vec4d();
 	ModelMat model;
 	Vec4d tvec;
 	Vec4d velo;
 	Vec4d rvec; //encode Euler angles 
 
-	public GameObject(Vec4d[] mesh, int faceSize) {
+	public GameObject(Vec4d[][] mesh) {
 		this.mesh = mesh; 
-		this.faceSize = faceSize;
+		//this.faceSize = faceSize;
 		this.rvec = new Vec4d(0,0,0,0);
 		this.tvec = new Vec4d(0,0,0,0);
 		this.model = new ModelMat(0, 0, 0, 0, 0, 0);
