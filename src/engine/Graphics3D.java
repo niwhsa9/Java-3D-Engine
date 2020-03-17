@@ -219,9 +219,9 @@ public class Graphics3D {
 			new Color[] {Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW},
 			new Color[] {Color.CYAN, Color.MAGENTA, Color.ORANGE, Color.WHITE},
 			new Color[] {Color.CYAN, Color.RED, Color.YELLOW, Color.WHITE},
-			new Color[] {Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW},
-			new Color[] {Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW},
-			new Color[] {Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW},
+			new Color[] {Color.MAGENTA, Color.GREEN, Color.BLUE, Color.ORANGE},
+			new Color[] {Color.CYAN, Color.MAGENTA, Color.GREEN, Color.RED},
+			new Color[] {Color.WHITE, Color.ORANGE, Color.BLUE, Color.YELLOW},
 
 		}; 
 		/*

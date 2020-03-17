@@ -58,6 +58,8 @@ public class TestScene extends Scene {
 		if(Input.keysPressed[Constants.KEY_W]) roll+=0.1;
 		if(Input.keysPressed[Constants.KEY_S]) roll-=0.1;
 
+		if(Input.keysPressed[Constants.KEY_E]) yaw+=0.1;
+		if(Input.keysPressed[Constants.KEY_Q]) yaw-=0.1;
 		//cube.setScale(2.0);
 		
 		//g3d.view.lookAt(new Vec3d(0.0, 0, 1.0));
@@ -85,7 +87,7 @@ public class TestScene extends Scene {
 		//pyramid.setEulerAngles(Math.PI, Math.PI, 0);
 		pyramid.setPos(-2.0, -1.0, 1.0);
 		//g3d.drawWireFrame(pyramid);
-		//mesh.setScale(0.02);
+		mesh.setScale(0.01);
 		g3d.renderMesh(cube);
 		g3d.renderMesh(pyramid);
 		//g3d.drawWireFrame(mesh);
