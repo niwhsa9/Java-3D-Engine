@@ -131,10 +131,15 @@ public class Graphics3D {
 					Vec3d b = getBarycentricCoord(new Vec3d(x, y, 1.0), v0, v1, v2);
 					double zC = 1.0/( (1.0/z[i][0]) * b.x  + (1.0/z[i][1]) * b.y + (1.0/z[i][2]) * b.z);
 					if(b.x + b.y + b.z <= 1.0 && zBuf[y * (int)Constants.WindowDims.width + x] > zC)  {
+						//System.out.println(zC/z[i][0]);
+						double k0 = Math.min(zC/z[i][0], 1.0);
+						double k1 = Math.min(zC/z[i][1], 1.0);
+						double k2 = Math.min(zC/z[i][2], 1.0);
+
 						zBuf[y * (int)Constants.WindowDims.width + x] = zC;
-							Color co = new Color( (int) (b.x * obj.vertexColor[i][0].getRed() + b.y * obj.vertexColor[i][1].getRed() + b.z * obj.vertexColor[i][2].getRed()), 
-									(int)(b.x * obj.vertexColor[i][0].getGreen() + b.y * obj.vertexColor[i][1].getGreen() + b.z * obj.vertexColor[i][2].getGreen()) , 
-									(int)(b.x * obj.vertexColor[i][0].getBlue() + b.y * obj.vertexColor[i][1].getBlue() + b.z * obj.vertexColor[i][2].getBlue())) ;
+							Color co = new Color( (int) (k0 * b.x * obj.vertexColor[i][0].getRed() +  k1 * b.y * obj.vertexColor[i][1].getRed() + k2 * b.z * obj.vertexColor[i][2].getRed()), 
+									(int)(k0*  b.x * obj.vertexColor[i][0].getGreen() + k1* b.y * obj.vertexColor[i][1].getGreen() + k2* b.z * obj.vertexColor[i][2].getGreen()) , 
+									(int)(k0*b.x * obj.vertexColor[i][0].getBlue() + k1* b.y * obj.vertexColor[i][1].getBlue() + k2*b.z * obj.vertexColor[i][2].getBlue())) ;
 						g2d.setColor(co);
 						g2d.fillRect(x, y, 1, 1);
 						

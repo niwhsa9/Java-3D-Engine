@@ -19,6 +19,14 @@ public class Constants {
 	public static final int KEY_D = 68;
 	public static final int KEY_E = 69;
 	public static final int KEY_Q = 81;
+	public static final int KEY_I = 73;
+	public static final int KEY_K = 75;
+	public static final int KEY_J = 74;
+	public static final int KEY_L = 76;
+
+
+
+
 
 	public static final int KEY_UP = 38;
 	public static final int KEY_DOWN = 40;

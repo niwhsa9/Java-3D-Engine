@@ -17,6 +17,7 @@ public class TestScene extends Scene {
 	double pitch = 0;
 	double roll = 0;
 	double yaw = 0; 
+	double x = 0;
 	
 	GameObject mesh;
     Font c = new Font("Courier", Font.PLAIN, 18);
@@ -60,6 +61,9 @@ public class TestScene extends Scene {
 
 		if(Input.keysPressed[Constants.KEY_E]) yaw+=0.1;
 		if(Input.keysPressed[Constants.KEY_Q]) yaw-=0.1;
+		
+		if(Input.keysPressed[Constants.KEY_I]) x+=0.1;
+		g3d.view.lookAt(new Vec3d(x, 0, 0));;
 		//cube.setScale(2.0);
 		
 		//g3d.view.lookAt(new Vec3d(0.0, 0, 1.0));
@@ -89,10 +93,18 @@ public class TestScene extends Scene {
 		//g3d.drawWireFrame(pyramid);
 		mesh.setScale(0.01);
 		g3d.renderMesh(cube);
-		g3d.renderMesh(pyramid);
+		g3d.drawWireFrame(pyramid);
 		//g3d.drawWireFrame(mesh);
 		//g3d.drawTriangle(g2d, new Vec2d(100, 100), new Vec2d(300, 500), new Vec2d(600, 100), Color.RED, Color.GREEN, Color.YELLOW);
 		
+		/* TODO 
+		 * clip cul
+		 * Textures 
+		 * Lighting 
+		 * skybox
+		 * Track
+		 * perspective correct texture 
+		 */
 		
 		
 		
