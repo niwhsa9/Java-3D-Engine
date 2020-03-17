@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.util.Arrays;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -59,6 +60,15 @@ public class Graphics3D {
 			}
 		}
 		
+		/* 
+		 * 
+		 * g2d.setColor(Color.RED);
+
+			g2d.fillPolygon(u[i], v[i], u[i].length);
+			g2d.setColor(Color.WHITE);
+			g2d.drawPolygon(u[i], v[i], u[i].length);
+		  
+		 */
 		for(int i = 0; i < u.length ; i++) {
 			
 			for(int q = 1; q < u[i].length; q++) {
@@ -68,10 +78,79 @@ public class Graphics3D {
 		}
 	}
 	
+	public void renderMesh(GameObject obj) {
+		
+		double[] zBuf = new double[Constants.WindowDims.width * Constants.WindowDims.height];
+		Arrays.fill(zBuf, Double.MAX_VALUE);
+		
+		int[][] u = new int[obj.face.length][];
+		int[][] v = new int[obj.face.length][];
+		double[][] z = new double[obj.face.length][];
+		
+		for(int i = 0; i < obj.face.length; i++) {
+			u[i] = new int[obj.face[i].length];
+			v[i] = new int[obj.face[i].length];
+			z[i] = new double[obj.face[i].length];
+
+			for(int q = 0; q < obj.face[i].length; q++) {
+				Mat p = obj.vertex[obj.face[i][q]].getHomogenous().getMat();
+				p = p.lmul(obj.model).lmul(view).lmul(proj); 
+		
+			
+				int x = (int) ((p.data[0]/p.data[3]) * Constants.WindowDims.width/2); 
+				int y = (int) ((p.data[1]/p.data[3]) * Constants.WindowDims.width/2); 
+			
+			
+				y = Constants.WindowDims.height/2 + y; 
+				x = Constants.WindowDims.width/2 + x; 
+				u[i][q] = x;
+				v[i][q] = y;
+				z[i][q] = p.data[2];
+				
+				//zBuf[y * Constants.WindowDims.width + x] = p.data[2];
+				g2d.fillRect(x, y, 1, 1);
+				drawCenteredString(g2d, Math.round((p.data[2])*100)/100.0 +"", c, x, y);
+			}
+			
+
+		}
+		for(int i = 0; i < obj.face.length; i++) {
+			Vec3d v0 = new Vec3d(u[i][0], v[i][0], 1.0);
+			Vec3d v1 = new Vec3d(u[i][1], v[i][1], 1.0);
+			Vec3d v2 = new Vec3d(u[i][2], v[i][2], 1.0);
+			
+				
+			int minX = (int)Math.min(Math.min(v0.x, v1.x), v2.x);
+			int width = (int)Math.max(Math.max(v0.x, v1.x), v2.x) - minX;
+			
+			int minY = (int)Math.min(Math.min(v0.y, v1.y), v2.y);
+			int height = (int)Math.max(Math.max(v0.y, v1.y), v2.y) - minY;
+			
+			for(int x = minX; x < minX+width; x++) {
+				for(int y = minY; y < minY+height; y++) {
+					Vec3d b = getBarycentricCoord(new Vec3d(x, y, 1.0), v0, v1, v2);
+					double zC = 1.0/( (1.0/z[i][0]) * b.x  + (1.0/z[i][1]) * b.y + (1.0/z[i][2]) * b.z);
+					if(b.x + b.y + b.z <= 1.0 && zBuf[y * (int)Constants.WindowDims.width + x] > zC)  {
+						zBuf[y * (int)Constants.WindowDims.width + x] = zC;
+							Color co = new Color( (int) (b.x * obj.vertexColor[i][0].getRed() + b.y * obj.vertexColor[i][1].getRed() + b.z * obj.vertexColor[i][2].getRed()), 
+									(int)(b.x * obj.vertexColor[i][0].getGreen() + b.y * obj.vertexColor[i][1].getGreen() + b.z * obj.vertexColor[i][2].getGreen()) , 
+									(int)(b.x * obj.vertexColor[i][0].getBlue() + b.y * obj.vertexColor[i][1].getBlue() + b.z * obj.vertexColor[i][2].getBlue())) ;
+						g2d.setColor(co);
+						g2d.fillRect(x, y, 1, 1);
+						
+					}
+				}
+			}
+		}
+		
+	}
+	
 	
 	private double getTriangleArea(Vec3d a, Vec3d b, Vec3d c) {
 		return 0.5 * ( (a.sub(c)).cross(b.sub(c))).getMag();
 	}
+	
+	
 	
 	private Vec3d getBarycentricCoord(Vec3d p, Vec3d v0, Vec3d v1, Vec3d v2) {
 		double area = getTriangleArea(v0, v1, v2);
@@ -100,6 +179,7 @@ public class Graphics3D {
 							(int)(b.x * c1.getGreen() + b.y * c2.getGreen() + b.z * c3.getGreen()) , 
 							(int)(b.x * c1.getBlue() + b.y * c2.getBlue() + b.z * c3.getBlue())) ;
 					g2d.setColor(co);
+				
 					//System.out.println(co.x + " " + co.y + " " + co.z);
 					g2d.fillRect(x, y, 1, 1);
 				}
@@ -132,50 +212,31 @@ public class Graphics3D {
 			new int[] {4, 5, 1, 0},
 			new int[] {7, 6, 2, 3}
 		};
-		GameObject cube = new GameObject(pV, pF);
-		return cube;
 		
+		
+		
+		Color[][] vC = new Color[][] {
+			new Color[] {Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW},
+			new Color[] {Color.CYAN, Color.MAGENTA, Color.ORANGE, Color.WHITE},
+			new Color[] {Color.CYAN, Color.RED, Color.YELLOW, Color.WHITE},
+			new Color[] {Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW},
+			new Color[] {Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW},
+			new Color[] {Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW},
+
+		}; 
 		/*
-		Vec4d[][] mesh = new Vec4d[6][4];
+		Color[][] vC = new Color[][] {
+			new Color[] {Color.RED, Color.RED, Color.RED, Color.RED},
+			new Color[] {Color.CYAN, Color.CYAN, Color.CYAN, Color.CYAN},
+			new Color[] {Color.GREEN, Color.GREEN, Color.GREEN, Color.GREEN},
+			new Color[] {Color.YELLOW, Color.YELLOW, Color.YELLOW, Color.YELLOW},
+			new Color[] {Color.YELLOW, Color.YELLOW, Color.YELLOW, Color.YELLOW},
+			new Color[] {Color.BLUE, Color.BLUE, Color.BLUE, Color.BLUE},
+
+		}; */
 		
-		double halfSide = side/2;
-		
-		//front
-		mesh[0][0] = new Vec4d(centerX - halfSide, centerY + halfSide, centerZ + halfSide, 1.0);
-		mesh[0][1] = new Vec4d(centerX + halfSide, centerY + halfSide, centerZ + halfSide, 1.0);
-		mesh[0][2] = new Vec4d(centerX + halfSide, centerY - halfSide, centerZ + halfSide, 1.0);
-		mesh[0][3] = new Vec4d(centerX - halfSide, centerY - halfSide, centerZ + halfSide, 1.0);
-		//back
-		
-		mesh[1][0] = new Vec4d(centerX - halfSide, centerY + halfSide, centerZ - halfSide, 1.0);
-		mesh[1][1] = new Vec4d(centerX + halfSide, centerY + halfSide, centerZ - halfSide, 1.0);
-		mesh[1][2] = new Vec4d(centerX + halfSide, centerY - halfSide, centerZ - halfSide, 1.0);
-		mesh[1][3] = new Vec4d(centerX - halfSide, centerY - halfSide, centerZ - halfSide, 1.0);
-		//left 
-		
-		mesh[2][0] = new Vec4d(centerX - halfSide, centerY + halfSide, centerZ - halfSide, 1.0);
-		mesh[2][1] = new Vec4d(centerX - halfSide, centerY + halfSide, centerZ + halfSide, 1.0);
-		mesh[2][2] = new Vec4d(centerX - halfSide, centerY - halfSide, centerZ + halfSide, 1.0);
-		mesh[2][3] = new Vec4d(centerX - halfSide, centerY - halfSide, centerZ - halfSide, 1.0);
-		//right
-		mesh[3][0] = new Vec4d(centerX + halfSide, centerY + halfSide, centerZ - halfSide, 1.0);
-		mesh[3][1] = new Vec4d(centerX + halfSide, centerY + halfSide, centerZ + halfSide, 1.0);
-		mesh[3][2] = new Vec4d(centerX + halfSide, centerY - halfSide, centerZ + halfSide, 1.0);
-		mesh[3][3] = new Vec4d(centerX + halfSide, centerY - halfSide, centerZ - halfSide, 1.0);
-		//top
-		mesh[4][0] = new Vec4d(centerX - halfSide, centerY + halfSide, centerZ - halfSide, 1.0);
-		mesh[4][1] = new Vec4d(centerX + halfSide, centerY + halfSide, centerZ - halfSide, 1.0);
-		mesh[4][2] = new Vec4d(centerX + halfSide, centerY + halfSide, centerZ + halfSide, 1.0);
-		mesh[4][3] = new Vec4d(centerX - halfSide, centerY + halfSide, centerZ + halfSide, 1.0);		
-		//bot
-		mesh[5][0] = new Vec4d(centerX - halfSide, centerY - halfSide, centerZ - halfSide, 1.0);
-		mesh[5][1] = new Vec4d(centerX + halfSide, centerY - halfSide, centerZ - halfSide, 1.0);
-		mesh[5][2] = new Vec4d(centerX + halfSide, centerY - halfSide, centerZ + halfSide, 1.0);
-		mesh[5][3] = new Vec4d(centerX - halfSide, centerY - halfSide, centerZ + halfSide, 1.0);
-		
-		
-		
-		return new GameObject(mesh); */
+		GameObject cube = new GameObject(pV, pF, vC);
+		return cube;
 	
 		
 	}
