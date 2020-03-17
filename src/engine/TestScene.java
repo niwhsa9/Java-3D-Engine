@@ -29,7 +29,7 @@ public class TestScene extends Scene {
 	double prevTime;
 	
 	public void readObj() {
-	//	mesh = GameObject.readFromFile("teapot.obj");
+		mesh = GameObject.readFromFile("teapot.obj");
 	}
 	
 	public void paintComponent(Graphics g) {
@@ -49,16 +49,22 @@ public class TestScene extends Scene {
 		prevTime = cur;
 		
 		GameObject cube = g3d.getCube(0, 0, 0, 1.0);
-		cube.setEulerAngles(0, 0, 0);
-		cube.setPos(0.0, 0.0, 2.0); 
+		cube.setEulerAngles(pitch, roll, yaw);
+		cube.setPos(0.0, 0.0, 2.0);
 		
+		if(Input.keysPressed[Constants.KEY_D]) pitch+=0.1;
+		if(Input.keysPressed[Constants.KEY_A]) pitch-=0.1;
+		
+		if(Input.keysPressed[Constants.KEY_W]) roll+=0.1;
+		if(Input.keysPressed[Constants.KEY_S]) roll-=0.1;
+
 		//cube.setScale(2.0);
 		
 		//g3d.view.lookAt(new Vec3d(0.0, 0, 1.0));
 		//System.out.println(cube.model);
 		//g3d.drawWireFrame(cube); 
 		
-		/*
+		
 		Vec3d[] pV = new Vec3d[] {
 				new Vec3d(-0.5, 0, -0.5),
 				new Vec3d(0.5, 0, -0.5),
@@ -75,12 +81,13 @@ public class TestScene extends Scene {
 			new int[] {2, 3, 4},
 			
 		};
-		GameObject pyramid = new GameObject(pV, pF); */
+		GameObject pyramid = new GameObject(pV, pF); 
 		//pyramid.setEulerAngles(Math.PI, Math.PI, 0);
+		pyramid.setPos(-2.0, -1.0, 1.0);
 		//g3d.drawWireFrame(pyramid);
 		//mesh.setScale(0.02);
 		g3d.renderMesh(cube);
-		//g3d.renderMesh(mesh);
+		g3d.renderMesh(pyramid);
 		//g3d.drawWireFrame(mesh);
 		//g3d.drawTriangle(g2d, new Vec2d(100, 100), new Vec2d(300, 500), new Vec2d(600, 100), Color.RED, Color.GREEN, Color.YELLOW);
 		

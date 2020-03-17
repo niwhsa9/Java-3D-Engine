@@ -29,6 +29,23 @@ public class GameObject {
 		this.model = new ModelMat(0, 0, 0, 0, 0, 0, scale);
 		triangularize();
 	}
+	
+	public GameObject(Vec3d[] vertex, int[][] face) {
+		this.vertex = vertex;
+		this.face = face;
+		this.vertexColor = new Color[face.length][];
+		for(int i = 0; i < face.length ;i++ ) {
+			vertexColor[i] = new Color[face[i].length];
+			for(int q = 0; q < face[i].length; q++) {
+				vertexColor[i][q] = Color.red;
+			}
+		}
+		// this.faceSize = faceSize;
+		this.rvec = new Vec4d(0, 0, 0, 0);
+		this.tvec = new Vec4d(0, 0, 0, 0);
+		this.model = new ModelMat(0, 0, 0, 0, 0, 0, scale);
+		triangularize();
+	}
 
 	public static GameObject readFromFile(String file) {
 
@@ -52,7 +69,7 @@ public class GameObject {
 				}
 			}
 
-			GameObject mesh = new GameObject(oV, iV, null);
+			GameObject mesh = new GameObject(oV, iV);
 			System.out.println("loaded obj");
 			return mesh; 
 		} catch (Exception e) {
