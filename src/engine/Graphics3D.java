@@ -123,6 +123,10 @@ public class Graphics3D {
 			Vec3d v1 = new Vec3d(u[i][1], v[i][1], 1.0);
 			Vec3d v2 = new Vec3d(u[i][2], v[i][2], 1.0);
 			
+			if(!inScreen(v0) && !inScreen(v1) && !inScreen(v2)) {
+				//System.out.println("trivial clip case");
+				continue;
+			}
 				
 			int minX = (int)Math.min(Math.min(v0.x, v1.x), v2.x);
 			int width = (int)Math.max(Math.max(v0.x, v1.x), v2.x) - minX;
@@ -173,7 +177,10 @@ public class Graphics3D {
 		return 0.5 * ( (a.sub(c)).cross(b.sub(c))).getMag();
 	}
 	
-	
+	private boolean inScreen(Vec3d a) {
+		if(a.x < 0 || a.x > Constants.WindowDims.width || a.y < 0 || a.y > Constants.WindowDims.height) return false; 
+		return true; 
+	}
 	
 	private Vec3d getBarycentricCoord(Vec3d p, Vec3d v0, Vec3d v1, Vec3d v2) {
 		double area = getTriangleArea(v0, v1, v2);
