@@ -17,6 +17,7 @@ public class Graphics3D {
 	double fov;
 	double nearClip;
 	double farClip;
+	static int t = 0;
 
     Font c = new Font("Courier", Font.PLAIN, 18);
 
@@ -79,7 +80,8 @@ public class Graphics3D {
 	}
 	
 	public void renderMesh(GameObject obj) {
-		
+		t++;
+
 		double[] zBuf = new double[Constants.WindowDims.width * Constants.WindowDims.height];
 		Arrays.fill(zBuf, Double.MAX_VALUE);
 		
@@ -95,7 +97,8 @@ public class Graphics3D {
 			for(int q = 0; q < obj.face[i].length; q++) {
 				Mat p = obj.vertex[obj.face[i][q]].getHomogenous().getMat();
 				p = p.lmul(obj.model).lmul(view).lmul(proj); 
-		
+				
+				//if(p.data[2]/p.data[3] > 1.0 || p.data[2]/p.data[3] < 0.0) continue;
 			
 				int x = (int) ((p.data[0]/p.data[3]) * Constants.WindowDims.width/2); 
 				int y = (int) ((p.data[1]/p.data[3]) * Constants.WindowDims.width/2); 
@@ -105,11 +108,12 @@ public class Graphics3D {
 				x = Constants.WindowDims.width/2 + x; 
 				u[i][q] = x;
 				v[i][q] = y;
-				z[i][q] = p.data[2];
+				z[i][q] = p.data[2]/p.data[3]; //obj.vertex[obj.face[i][q]].z;
 				
 				//zBuf[y * Constants.WindowDims.width + x] = p.data[2];
+			
 				g2d.fillRect(x, y, 1, 1);
-				drawCenteredString(g2d, Math.round((p.data[2])*100)/100.0 +"", c, x, y);
+				//drawCenteredString(g2d, Math.round((p.data[2]/p.data[3])*10000)/10000.0 +"", c, x, y);
 			}
 			
 
@@ -130,18 +134,32 @@ public class Graphics3D {
 				for(int y = minY; y < minY+height; y++) {
 					Vec3d b = getBarycentricCoord(new Vec3d(x, y, 1.0), v0, v1, v2);
 					double zC = 1.0/( (1.0/z[i][0]) * b.x  + (1.0/z[i][1]) * b.y + (1.0/z[i][2]) * b.z);
+					
+					if(zC > 1.0 || zC < 0) continue; //near/far clip
+					
+					if(x < 0 || x >= Constants.WindowDims.width || y < 0 || y >= Constants.WindowDims.height) continue; //offscreen clip
+					if(b.x < 0 || b.y < 0 || b.z < 0) continue;
+					//if(z[i][0] < 0.0 || z[i] )
+					
+					
 					if(b.x + b.y + b.z <= 1.0 && zBuf[y * (int)Constants.WindowDims.width + x] > zC)  {
-						//System.out.println(zC/z[i][0]);
 						double k0 = Math.min(zC/z[i][0], 1.0);
 						double k1 = Math.min(zC/z[i][1], 1.0);
 						double k2 = Math.min(zC/z[i][2], 1.0);
+						//if(t%10 == 0) System.out.println(k0 +" , " + k1 + ", " + k2);
+						//if(x%10 == 0)System.out.println(b.x +" " + b.y + " " + b.z);
 
 						zBuf[y * (int)Constants.WindowDims.width + x] = zC;
+						try {
 							Color co = new Color( (int) (k0 * b.x * obj.vertexColor[i][0].getRed() +  k1 * b.y * obj.vertexColor[i][1].getRed() + k2 * b.z * obj.vertexColor[i][2].getRed()), 
 									(int)(k0*  b.x * obj.vertexColor[i][0].getGreen() + k1* b.y * obj.vertexColor[i][1].getGreen() + k2* b.z * obj.vertexColor[i][2].getGreen()) , 
-									(int)(k0*b.x * obj.vertexColor[i][0].getBlue() + k1* b.y * obj.vertexColor[i][1].getBlue() + k2*b.z * obj.vertexColor[i][2].getBlue())) ;
-						g2d.setColor(co);
-						g2d.fillRect(x, y, 1, 1);
+									(int)(k0 * b.x * obj.vertexColor[i][0].getBlue() + k1* b.y * obj.vertexColor[i][1].getBlue() + k2*b.z * obj.vertexColor[i][2].getBlue())) ;
+							g2d.setColor(co);
+							g2d.fillRect(x, y, 1, 1);
+						} catch (Exception e) {
+							
+						}
+						
 						
 					}
 				}

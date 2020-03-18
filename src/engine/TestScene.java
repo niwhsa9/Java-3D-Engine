@@ -42,7 +42,7 @@ public class TestScene extends Scene {
 		g2d.setColor(Color.BLACK);
 		g2d.fillRect(0, 0, Constants.WindowDims.width, Constants.WindowDims.height);
 		
-		Graphics3D g3d = new Graphics3D(g2d, 30, 0.1, 10);
+		Graphics3D g3d = new Graphics3D(g2d, 30, 0.1, 20);
 		
 		double cur = System.currentTimeMillis()/1000.0;
 		g2d.setColor(Color.RED);
@@ -51,7 +51,7 @@ public class TestScene extends Scene {
 		
 		GameObject cube = g3d.getCube(0, 0, 0, 1.0);
 		cube.setEulerAngles(pitch, roll, yaw);
-		cube.setPos(0.0, 0.0, 2.0);
+		cube.setPos(x, 0.0, 2.0);
 		
 		if(Input.keysPressed[Constants.KEY_D]) pitch+=0.1;
 		if(Input.keysPressed[Constants.KEY_A]) pitch-=0.1;
@@ -62,8 +62,13 @@ public class TestScene extends Scene {
 		if(Input.keysPressed[Constants.KEY_E]) yaw+=0.1;
 		if(Input.keysPressed[Constants.KEY_Q]) yaw-=0.1;
 		
-		if(Input.keysPressed[Constants.KEY_I]) x+=0.1;
-		g3d.view.lookAt(new Vec3d(x, 0, 0));;
+		if(Input.keysPressed[Constants.KEY_I]) x-=0.06;
+		if(Input.keysPressed[Constants.KEY_K]) x+=0.06;
+
+		
+		g3d.view.lookAt(new Vec3d(0, 0, 0));
+		//g3d.view.setPos(new Vec3d(0.0, 0.0, x));
+		//System.out.println(g3d.view.pos.z - cube.tvec.z);
 		//cube.setScale(2.0);
 		
 		//g3d.view.lookAt(new Vec3d(0.0, 0, 1.0));
@@ -93,8 +98,8 @@ public class TestScene extends Scene {
 		//g3d.drawWireFrame(pyramid);
 		mesh.setScale(0.01);
 		g3d.renderMesh(cube);
-		g3d.drawWireFrame(pyramid);
-		//g3d.drawWireFrame(mesh);
+		//g3d.drawWireFrame(pyramid);
+		//g3d.drawWireFrame(cube);
 		//g3d.drawTriangle(g2d, new Vec2d(100, 100), new Vec2d(300, 500), new Vec2d(600, 100), Color.RED, Color.GREEN, Color.YELLOW);
 		
 		/* TODO 
