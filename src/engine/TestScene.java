@@ -30,7 +30,8 @@ public class TestScene extends Scene {
 	double prevTime;
 	
 	public void readObj() {
-		mesh = GameObject.readFromFile("teapot.obj");
+		mesh = GameObject.readFromFile("Crate1.obj", "crate_1.jpg");
+		
 	}
 	
 	public void paintComponent(Graphics g) {
@@ -96,10 +97,14 @@ public class TestScene extends Scene {
 		//pyramid.setEulerAngles(Math.PI, Math.PI, 0);
 		pyramid.setPos(-2.0, -1.0, 1.0);
 		//g3d.drawWireFrame(pyramid);
-		mesh.setScale(0.01);
-		g3d.renderMesh(cube);
+		mesh.setScale(0.3);
+		mesh.setEulerAngles(pitch, roll, yaw);
+
+		g3d.renderMesh(mesh, true);
+		
+		//System.out.println(mesh.getTexColor(0.64375, 0.328125).getGreen());
 		//g3d.drawWireFrame(pyramid);
-		//g3d.drawWireFrame(cube);
+		//g3d.drawWireFrame(mesh);
 		//g3d.drawTriangle(g2d, new Vec2d(100, 100), new Vec2d(300, 500), new Vec2d(600, 100), Color.RED, Color.GREEN, Color.YELLOW);
 		
 		/* TODO 

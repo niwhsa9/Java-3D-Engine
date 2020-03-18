@@ -79,7 +79,7 @@ public class Graphics3D {
 		}
 	}
 	
-	public void renderMesh(GameObject obj) {
+	public void renderMesh(GameObject obj, boolean useTexture) {
 		t++;
 
 		double[] zBuf = new double[Constants.WindowDims.width * Constants.WindowDims.height];
@@ -155,13 +155,19 @@ public class Graphics3D {
 
 						zBuf[y * (int)Constants.WindowDims.width + x] = zC;
 						try {
-							Color co = new Color( (int) (k0 * b.x * obj.vertexColor[i][0].getRed() +  k1 * b.y * obj.vertexColor[i][1].getRed() + k2 * b.z * obj.vertexColor[i][2].getRed()), 
+							if(!useTexture) {
+								Color co = new Color( (int) (k0 * b.x * obj.vertexColor[i][0].getRed() +  k1 * b.y * obj.vertexColor[i][1].getRed() + k2 * b.z * obj.vertexColor[i][2].getRed()), 
 									(int)(k0*  b.x * obj.vertexColor[i][0].getGreen() + k1* b.y * obj.vertexColor[i][1].getGreen() + k2* b.z * obj.vertexColor[i][2].getGreen()) , 
 									(int)(k0 * b.x * obj.vertexColor[i][0].getBlue() + k1* b.y * obj.vertexColor[i][1].getBlue() + k2*b.z * obj.vertexColor[i][2].getBlue())) ;
-							g2d.setColor(co);
+								g2d.setColor(co);
+							} else {
+								Color co = obj.getTexColor(k0*b.x * obj.texVertex[obj.textureCoord[i][0]].x + k1*b.y * obj.texVertex[obj.textureCoord[i][1]].x + k2*b.z * obj.texVertex[obj.textureCoord[i][2]].x, 
+										k0*b.x * obj.texVertex[obj.textureCoord[i][0]].y + k1* b.y * obj.texVertex[obj.textureCoord[i][1]].y + k2* b.z * obj.texVertex[obj.textureCoord[i][2]].y);
+								g2d.setColor(co);
+							}
 							g2d.fillRect(x, y, 1, 1);
 						} catch (Exception e) {
-							
+							e.printStackTrace();
 						}
 						
 						

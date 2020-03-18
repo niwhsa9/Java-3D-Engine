@@ -1,9 +1,14 @@
 package engine;
 
 import java.awt.Color;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+
+import javax.imageio.ImageIO;
 
 import de.javagl.obj.Obj;
 import de.javagl.obj.ObjReader;
@@ -11,13 +16,19 @@ import de.javagl.obj.ObjUtils;
 
 public class GameObject {
 	Vec3d[] vertex;
+	Vec2d[] texVertex;
+
 	int[][] face;
+	int[][] textureCoord; 
 	ModelMat model;
 	Vec4d tvec;
 	Vec4d velo;
 	Vec4d rvec; // encode Euler angles
 	double scale = 1.0;
 	Color[][] vertexColor;
+	BufferedImage texture; 
+	byte[] textureData; 
+
 
 	public GameObject(Vec3d[] vertex, int[][] face, Color[][] vertexColor) {
 		this.vertex = vertex;
@@ -47,35 +58,68 @@ public class GameObject {
 		triangularize();
 	}
 
-	public static GameObject readFromFile(String file) {
+	public static GameObject readFromFile(String file, String tex) {
 
 		try {
 			InputStream objInputStream = new FileInputStream(file);
 			Obj obj = ObjReader.read(objInputStream);
 			obj = ObjUtils.triangulate(obj);
+			
 
 			Vec3d[] oV = new Vec3d[obj.getNumVertices()];
+			Vec2d[] tV = new Vec2d[obj.getNumTexCoords()];
+			
 
 			for (int i = 0; i < obj.getNumVertices(); i++) {
 				oV[i] = new Vec3d(obj.getVertex(i).getX(), obj.getVertex(i).getY(), obj.getVertex(i).getZ());
 			}
+			for(int i = 0; i < obj.getNumTexCoords(); i++) {
+				tV[i] = new Vec2d(obj.getTexCoord(i).getX(), obj.getTexCoord(i).getY());
+			}
+			
+			
 
 			int[][] iV = new int[obj.getNumFaces()][];
+			int[][] tF = new int[obj.getNumFaces()][];
 
 			for (int i = 0; i < obj.getNumFaces(); i++) {
 				iV[i] = new int[3];
+				tF[i] = new int[3];
 				for (int q = 0; q < 3; q++) {
 					iV[i][q] = obj.getFace(i).getVertexIndex(q);
+					tF[i][q] = obj.getFace(i).getTexCoordIndex(q);
 				}
 			}
 
 			GameObject mesh = new GameObject(oV, iV);
+			mesh.texVertex = tV;
+			mesh.textureCoord = tF;
 			System.out.println("loaded obj");
+			
+			try {
+				mesh.texture = ImageIO.read(new File(tex));
+				mesh.textureData = ((DataBufferByte) mesh.texture.getRaster().getDataBuffer()).getData();
+
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+			
 			return mesh; 
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
+
+	}
+	
+	//input normalized texture coord
+	public Color getTexColor(double  xP, double yP) {
+		int x = (int) (xP * (texture.getWidth()-1));
+		int y = (int) (yP * (texture.getHeight()-1));
+		
+		int i = y * 3 * texture.getWidth() + x * 3; 
+		return new Color(textureData[i+2] & 0xFF, textureData[i+1] & 0xFF, textureData[i] & 0xFF);
+		
 
 	}
 
